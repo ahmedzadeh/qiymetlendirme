@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qiymətləndirmə</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #fdf6f0;
+            color: #3e3e3e;
+            padding: 20px;
+            max-width: 450px;
+            margin: auto;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #6ec1e4;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        button[type="submit"]:hover {
+            background-color: #4ea9d6;
+        }
+        button[type="submit"]:active {
+            transform: scale(0.97);
+        }
+        .reset-button {
+            background-color: #f0b6b6;
+        }
+        .result {
+            margin-top: 20px;
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #f0c998;
+        }
+        h2 {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .section { display: none; }
+        .active { display: block; }
+    </style>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h2>Qiymətləndirmə</h2>
+    <select onchange="switchSection(this.value)">
+        <option value="yarimillik">Yarımillik</option>
+        <option value="illik">İllik</option>
+    </select>
+
+    <div id="yarimillik" class="section active">
+        <input type="tel" id="ksq1" inputmode="decimal" pattern="[0-9.,]*" placeholder="KSQ 1 (nümunə: 83,5)">
+        <input type="tel" id="ksq2" inputmode="decimal" pattern="[0-9.,]*" placeholder="KSQ 2">
+        <input type="tel" id="ksq3" inputmode="decimal" pattern="[0-9.,]*" placeholder="KSQ 3">
+        <label><input type="checkbox" id="has_bsq"> BSQ daxil edilib</label>
+        <input type="tel" id="bsq" inputmode="decimal" pattern="[0-9.,]*" placeholder="BSQ balı (əgər varsa)">
+        <button onclick="calculateYarimillik()">Hesabla</button>
+        <button class="reset-button" onclick="resetForm('yarimillik')">Sıfırla</button>
+    </div>
+
+    <div id="illik" class="section">
+        <input type="tel" id="y1" inputmode="decimal" pattern="[0-9.,]*" placeholder="1-ci yarımillik bal">
+        <input type="tel" id="y2" inputmode="decimal" pattern="[0-9.,]*" placeholder="2-ci yarımillik bal">
+        <button onclick="calculateIllik()">Hesabla</button>
+        <button class="reset-button" onclick="resetForm('illik')">Sıfırla</button>
+    </div>
+
+    <div class="result" id="result"></div>
+</body>
+</html>
