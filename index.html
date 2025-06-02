@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Qiymətləndirmə</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="icon.png">
+</head>
+<body>
+  <h2>Qiymətləndirmə</h2>
+  <select onchange="switchSection(this.value)">
+    <option value="yarimillik">Yarımillik</option>
+    <option value="illik">İllik</option>
+  </select>
+
+  <div id="yarimillik" class="section active">
+    <input type="text" id="ksq1" placeholder="KSQ 1 (nümunə: 83,5)" />
+    <input type="text" id="ksq2" placeholder="KSQ 2" />
+    <input type="text" id="ksq3" placeholder="KSQ 3" />
+    <label><input type="checkbox" id="has_bsq"> BSQ daxil edilib</label>
+    <input type="text" id="bsq" placeholder="BSQ balı (əgər varsa)" />
+    <button onclick="calculateYarimillik()">Hesabla</button>
+    <button onclick="resetForm('yarimillik')">Sıfırla</button>
+  </div>
+
+  <div id="illik" class="section">
+    <input type="text" id="y1" placeholder="1-ci yarımillik bal" />
+    <input type="text" id="y2" placeholder="2-ci yarımillik bal" />
+    <button onclick="calculateIllik()">Hesabla</button>
+    <button onclick="resetForm('illik')">Sıfırla</button>
+  </div>
+
+  <div id="result" class="result" style="display:none"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
