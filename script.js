@@ -13,7 +13,7 @@ function showResult(bal) {
   const qiymet = qiymetVer(bal);
   const resultDiv = document.getElementById("result");
   resultDiv.innerHTML = `Bal: ${bal} <br> Qiymət: ${qiymet}`;
-  resultDiv.style.display = "block";
+  resultDiv.classList.add("visible");
 }
 
 function calculateYarimillik() {
@@ -40,7 +40,7 @@ function resetForm(id) {
     if (input.type === "checkbox") input.checked = false;
     else input.value = "";
   });
-  document.getElementById("result").style.display = "none";
+  document.getElementById("result").classList.remove("visible");
 }
 
 function switchSection(type) {

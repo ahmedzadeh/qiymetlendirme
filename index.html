@@ -25,18 +25,22 @@
             border-radius: 8px;
             box-sizing: border-box;
         }
-        button[type="submit"] {
+        button {
             background-color: #6ec1e4;
             color: white;
             border: none;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease,
+                box-shadow 0.2s ease;
         }
-        button[type="submit"]:hover {
+        button:hover {
             background-color: #4ea9d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        button[type="submit"]:active {
-            transform: scale(0.97);
+        button:active {
+            transform: translateY(0) scale(0.97);
+            box-shadow: none;
         }
         .reset-button {
             background-color: #f0b6b6;
@@ -47,6 +51,17 @@
             padding: 12px;
             border-radius: 8px;
             border: 1px solid #f0c998;
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(10px);
+            overflow: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease,
+                max-height 0.3s ease;
+        }
+        .result.visible {
+            opacity: 1;
+            max-height: 200px;
+            transform: translateY(0);
         }
         h2 {
             text-align: center;
