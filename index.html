@@ -1,47 +1,59 @@
-
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Qiymətləndirmə</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
 </head>
 <body>
   <div class="container">
     <h2>Qiymətləndirmə</h2>
-    <label for="section-select" class="visually-hidden">Qiymət növü</label>
     <select id="section-select" onchange="switchSection(this.value)">
       <option value="yarimillik">Yarımillik</option>
       <option value="illik">İllik</option>
     </select>
 
     <div id="yarimillik" class="section active">
-      <div class="field"><label for="ksq1">KSQ 1</label><input type="tel" id="ksq1" inputmode="decimal" pattern="[0-9.,]*" placeholder="nümunə: 83,5"></div>
-      <div class="field"><label for="ksq2">KSQ 2</label><input type="tel" id="ksq2" inputmode="decimal" pattern="[0-9.,]*"></div>
-      <div class="field"><label for="ksq3">KSQ 3</label><input type="tel" id="ksq3" inputmode="decimal" pattern="[0-9.,]*"></div>
-
+      <div class="field">
+        <label for="ksq1">KSQ 1</label>
+        <input type="tel" id="ksq1" inputmode="decimal" pattern="[0-9.,]*">
+      </div>
+      <div class="field">
+        <label for="ksq2">KSQ 2</label>
+        <input type="tel" id="ksq2" inputmode="decimal" pattern="[0-9.,]*">
+      </div>
+      <div class="field">
+        <label for="ksq3">KSQ 3</label>
+        <input type="tel" id="ksq3" inputmode="decimal" pattern="[0-9.,]*">
+      </div>
       <div class="field checkbox">
         <input type="checkbox" id="has_bsq">
         <label for="has_bsq">BSQ daxil edilib</label>
       </div>
-
-      <div class="field"><label for="bsq">BSQ balı (əgər varsa)</label><input type="tel" id="bsq" inputmode="decimal" pattern="[0-9.,]*"></div>
+      <div class="field">
+        <label for="bsq">BSQ balı</label>
+        <input type="tel" id="bsq" inputmode="decimal" pattern="[0-9.,]*">
+      </div>
       <button onclick="calculateYarimillik()">Hesabla</button>
-      <button class="reset-button" onclick="resetForm('yarimillik')">🔄 Sıfırla</button>
+      <button onclick="resetForm('yarimillik')" class="reset-button">Sıfırla</button>
     </div>
 
     <div id="illik" class="section">
-      <div class="field"><label for="y1">1-ci yarımillik bal</label><input type="tel" id="y1" inputmode="decimal" pattern="[0-9.,]*"></div>
-      <div class="field"><label for="y2">2-ci yarımillik bal</label><input type="tel" id="y2" inputmode="decimal" pattern="[0-9.,]*"></div>
+      <div class="field">
+        <label for="y1">1-ci yarımillik</label>
+        <input type="tel" id="y1" inputmode="decimal" pattern="[0-9.,]*">
+      </div>
+      <div class="field">
+        <label for="y2">2-ci yarımillik</label>
+        <input type="tel" id="y2" inputmode="decimal" pattern="[0-9.,]*">
+      </div>
       <button onclick="calculateIllik()">Hesabla</button>
-      <button class="reset-button" onclick="resetForm('illik')">🔄 Sıfırla</button>
+      <button onclick="resetForm('illik')" class="reset-button">Sıfırla</button>
     </div>
 
-    <div class="result" id="result"></div>
+    <div id="result" class="result"></div>
   </div>
 </body>
 </html>
