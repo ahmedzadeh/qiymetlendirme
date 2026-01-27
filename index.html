@@ -3,44 +3,776 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Qiymətləndirmə</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.png">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+  <meta name="description" content="Şagird qiymətlərini hesablamaq üçün professional kalkulyator">
+  <meta name="theme-color" content="#5b21b6">
+  <title>Qiymətləndirmə Kalkulyatoru</title>
+  
+  <style>
+    /* CSS Variables for Theme */
+    :root {
+      --primary-color: #5b21b6;
+      --primary-hover: #4c1d95;
+      --primary-light: #8b5cf6;
+      --secondary-color: #06b6d4;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --background: #f9fafb;
+      --surface: #ffffff;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius: 0.5rem;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #111827;
+        --surface: #1f2937;
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+        --border-color: #374151;
+      }
+    }
+
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* Container */
+    .container {
+      background: var(--surface);
+      border-radius: 1rem;
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header p {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Tab Navigation */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 1rem;
+      background: none;
+      border: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .tab:hover {
+      color: var(--primary-color);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary-color);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary-color);
+      animation: slideInTab 0.3s ease-out;
+    }
+
+    @keyframes slideInTab {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    /* Content */
+    .content {
+      padding: 2rem;
+    }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      background: var(--background);
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .checkbox {
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-right: 0.75rem;
+      cursor: pointer;
+      accent-color: var(--primary-color);
+    }
+
+    /* Buttons */
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .button {
+      flex: 1;
+      padding: 0.875rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .button-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .button-secondary {
+      background: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .button-secondary:hover {
+      background: #d1d5db;
+    }
+
+    /* Result Card */
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: var(--transition);
+    }
+
+    .result.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-title {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-grade {
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      background: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .grade-5 { color: var(--success-color); }
+    .grade-4 { color: var(--secondary-color); }
+    .grade-3 { color: var(--warning-color); }
+    .grade-2 { color: var(--danger-color); }
+
+    /* Help Text */
+    .help-text {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    /* Loading State */
+    .loading {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid transparent;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .content {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Accessibility */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Focus Visible */
+    *:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h2>Qiymətləndirmə</h2>
-    <label for="section-select" class="visually-hidden">Qiymət növü</label>
-    <select id="section-select" onchange="switchSection(this.value)">
-      <option value="yarimillik">Yarımillik</option>
-      <option value="illik">İllik</option>
-    </select>
+    <header class="header">
+      <h1>Qiymətləndirmə Kalkulyatoru</h1>
+      <p>Şagird qiymətlərini asanlıqla hesablayın</p>
+    </header>
 
-    <div id="yarimillik" class="section active">
-      <div class="field"><label for="ksq1"><b>KSQ 1</b></label><input type="tel" id="ksq1" inputmode="decimal" pattern="[0-9.,]*" placeholder="nümunə: 83,5"></div>
-      <div class="field"><label for="ksq2"><b>KSQ 2</b></label><input type="tel" id="ksq2" inputmode="decimal" pattern="[0-9.,]*"></div>
-      <div class="field"><label for="ksq3"><b>KSQ 3</b></label><input type="tel" id="ksq3" inputmode="decimal" pattern="[0-9.,]*"></div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true" aria-controls="yarimillik-panel" onclick="switchTab('yarimillik')">
+        Yarımillik
+      </button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="illik-panel" onclick="switchTab('illik')">
+        İllik
+      </button>
+    </nav>
 
-      <div class="field checkbox">
-        <input type="checkbox" id="has_bsq">
-        <label for="has_bsq">BSQ daxil edilib</label>
-      </div>
+    <main class="content">
+      <!-- Yarımillik Section -->
+      <section id="yarimillik" class="section active" role="tabpanel" aria-labelledby="yarimillik-tab">
+        <form onsubmit="calculateYarimillik(event)">
+          <div class="form-group">
+            <label for="ksq1" class="form-label">KSQ 1</label>
+            <input 
+              type="number" 
+              id="ksq1" 
+              class="form-input" 
+              placeholder="0-100 arası bal daxil edin"
+              min="0"
+              max="100"
+              step="0.1"
+              required
+              aria-describedby="ksq1-help"
+            >
+            <p id="ksq1-help" class="help-text">Birinci kiçik summativ qiymətləndirmə balı</p>
+          </div>
 
-      <div class="field"><label for="bsq">BSQ balı (əgər varsa)</label><input type="tel" id="bsq" inputmode="decimal" pattern="[0-9.,]*"></div>
-      <button onclick="calculateYarimillik()">Hesabla</button>
-      <button class="reset-button" onclick="resetForm('yarimillik')">🔄 Sıfırla</button>
-    </div>
+          <div class="form-group">
+            <label for="ksq2" class="form-label">KSQ 2</label>
+            <input 
+              type="number" 
+              id="ksq2" 
+              class="form-input" 
+              placeholder="0-100 arası bal daxil edin"
+              min="0"
+              max="100"
+              step="0.1"
+              required
+            >
+          </div>
 
-    <div id="illik" class="section">
-      <div class="field"><label for="y1">1-ci yarımillik bal</label><input type="tel" id="y1" inputmode="decimal" pattern="[0-9.,]*"></div>
-      <div class="field"><label for="y2">2-ci yarımillik bal</label><input type="tel" id="y2" inputmode="decimal" pattern="[0-9.,]*"></div>
-      <button onclick="calculateIllik()">Hesabla</button>
-      <button class="reset-button" onclick="resetForm('illik')">🔄 Sıfırla</button>
-    </div>
+          <div class="form-group">
+            <label for="ksq3" class="form-label">KSQ 3</label>
+            <input 
+              type="number" 
+              id="ksq3" 
+              class="form-input" 
+              placeholder="0-100 arası bal daxil edin"
+              min="0"
+              max="100"
+              step="0.1"
+              required
+            >
+          </div>
 
-    <div class="result" id="result"></div>
+          <div class="checkbox-group">
+            <input 
+              type="checkbox" 
+              id="has_bsq" 
+              class="checkbox"
+              onchange="toggleBSQ()"
+            >
+            <label for="has_bsq" class="form-label" style="margin-bottom: 0;">
+              BSQ daxil edilib
+            </label>
+          </div>
+
+          <div class="form-group" id="bsq-group" style="display: none;">
+            <label for="bsq" class="form-label">BSQ balı</label>
+            <input 
+              type="number" 
+              id="bsq" 
+              class="form-input" 
+              placeholder="0-100 arası bal daxil edin"
+              min="0"
+              max="100"
+              step="0.1"
+              aria-describedby="bsq-help"
+            >
+            <p id="bsq-help" class="help-text">Böyük summativ qiymətləndirmə balı</p>
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="button button-primary">
+              <span>Hesabla</span>
+            </button>
+            <button type="button" class="button button-secondary" onclick="resetForm('yarimillik')">
+              <span>Təmizlə</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="yarimillik-result" class="result">
+          <p class="result-title">Yarımillik nəticəsi</p>
+          <p class="result-value" id="yarimillik-bal">0</p>
+          <span class="result-grade" id="yarimillik-qiymet">0</span>
+        </div>
+      </section>
+
+      <!-- İllik Section -->
+      <section id="illik" class="section" role="tabpanel" aria-labelledby="illik-tab">
+        <form onsubmit="calculateIllik(event)">
+          <div class="form-group">
+            <label for="y1" class="form-label">1-ci yarımillik balı</label>
+            <input 
+              type="number" 
+              id="y1" 
+              class="form-input" 
+              placeholder="0-100 arası bal daxil edin"
+              min="0"
+              max="100"
+              step="0.1"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="y2" class="form-label">2-ci yarımillik balı</label>
+            <input 
+              type="number" 
+              id="y2" 
+              class="form-input" 
+              placeholder="0-100 arası bal daxil edin"
+              min="0"
+              max="100"
+              step="0.1"
+              required
+            >
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="button button-primary">
+              <span>Hesabla</span>
+            </button>
+            <button type="button" class="button button-secondary" onclick="resetForm('illik')">
+              <span>Təmizlə</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="illik-result" class="result">
+          <p class="result-title">İllik nəticəsi</p>
+          <p class="result-value" id="illik-bal">0</p>
+          <span class="result-grade" id="illik-qiymet">0</span>
+        </div>
+      </section>
+    </main>
   </div>
+
+  <script>
+    // Tab switching functionality
+    function switchTab(tabName) {
+      // Update tab buttons
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
+      });
+      
+      // Update sections
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Activate selected tab and section
+      const activeTab = Array.from(tabs).find(tab => 
+        tab.textContent.trim().toLowerCase() === tabName.toLowerCase()
+      );
+      if (activeTab) {
+        activeTab.classList.add('active');
+        activeTab.setAttribute('aria-selected', 'true');
+      }
+      
+      document.getElementById(tabName).classList.add('active');
+      
+      // Hide results when switching tabs
+      document.querySelectorAll('.result').forEach(result => {
+        result.classList.remove('visible');
+      });
+    }
+
+    // Toggle BSQ input visibility
+    function toggleBSQ() {
+      const checkbox = document.getElementById('has_bsq');
+      const bsqGroup = document.getElementById('bsq-group');
+      const bsqInput = document.getElementById('bsq');
+      
+      if (checkbox.checked) {
+        bsqGroup.style.display = 'block';
+        bsqInput.required = true;
+      } else {
+        bsqGroup.style.display = 'none';
+        bsqInput.required = false;
+        bsqInput.value = '';
+      }
+    }
+
+    // Convert string to float safely
+    function toFloatSafe(val) {
+      const num = parseFloat(String(val).replace(',', '.'));
+      return isNaN(num) ? 0 : num;
+    }
+
+    // Calculate grade based on score
+    function qiymetVer(bal) {
+      if (bal >= 81) return 5;
+      if (bal >= 61) return 4;
+      if (bal >= 31) return 3;
+      return 2;
+    }
+
+    // Show result with animation
+    function showResult(resultId, bal, qiymet) {
+      const resultDiv = document.getElementById(resultId);
+      const balElement = document.getElementById(resultId.replace('-result', '-bal'));
+      const qiymetElement = document.getElementById(resultId.replace('-result', '-qiymet'));
+      
+      balElement.textContent = bal;
+      qiymetElement.textContent = qiymet;
+      qiymetElement.className = `result-grade grade-${qiymet}`;
+      
+      // Animate result
+      setTimeout(() => {
+        resultDiv.classList.add('visible');
+      }, 100);
+    }
+
+    // Calculate Yarımillik
+    function calculateYarimillik(event) {
+      event.preventDefault();
+      
+      const k1 = toFloatSafe(document.getElementById('ksq1').value);
+      const k2 = toFloatSafe(document.getElementById('ksq2').value);
+      const k3 = toFloatSafe(document.getElementById('ksq3').value);
+      const hasBsq = document.getElementById('has_bsq').checked;
+      const b = hasBsq ? toFloatSafe(document.getElementById('bsq').value) : 0;
+      
+      // Validate inputs
+      if (k1 < 0 || k1 > 100 || k2 < 0 || k2 > 100 || k3 < 0 || k3 > 100) {
+        alert('KSQ balları 0-100 arasında olmalıdır!');
+        return;
+      }
+      
+      if (hasBsq && (b < 0 || b > 100)) {
+        alert('BSQ balı 0-100 arasında olmalıdır!');
+        return;
+      }
+      
+      // Calculate result
+      const ortalama = (k1 + k2 + k3) / 3;
+      const netice = hasBsq ? (ortalama * 0.4 + b * 0.6) : ortalama;
+      const bal = Math.round(netice * 10) / 10;
+      const qiymet = qiymetVer(bal);
+      
+      showResult('yarimillik-result', bal, qiymet);
+    }
+
+    // Calculate İllik
+    function calculateIllik(event) {
+      event.preventDefault();
+      
+      const y1 = toFloatSafe(document.getElementById('y1').value);
+      const y2 = toFloatSafe(document.getElementById('y2').value);
+      
+      // Validate inputs
+      if (y1 < 0 || y1 > 100 || y2 < 0 || y2 > 100) {
+        alert('Yarımillik balları 0-100 arasında olmalıdır!');
+        return;
+      }
+      
+      // Calculate result
+      const netice = (y1 + y2) / 2;
+      const bal = Math.round(netice * 10) / 10;
+      const qiymet = qiymetVer(bal);
+      
+      showResult('illik-result', bal, qiymet);
+    }
+
+    // Reset form
+    function resetForm(formType) {
+      // Clear inputs
+      const inputs = document.querySelectorAll(`#${formType} input`);
+      inputs.forEach(input => {
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+      
+      // Hide BSQ if yarımillik
+      if (formType === 'yarimillik') {
+        document.getElementById('bsq-group').style.display = 'none';
+        document.getElementById('bsq').required = false;
+      }
+      
+      // Hide result
+      document.getElementById(`${formType}-result`).classList.remove('visible');
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        // Tab navigation is handled by browser
+        return;
+      }
+      
+      // Switch tabs with arrow keys
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const tabs = document.querySelectorAll('.tab');
+        const activeIndex = Array.from(tabs).findIndex(tab => tab.classList.contains('active'));
+        
+        if (e.key === 'ArrowLeft' && activeIndex > 0) {
+          tabs[activeIndex - 1].click();
+        } else if (e.key === 'ArrowRight' && activeIndex < tabs.length - 1) {
+          tabs[activeIndex + 1].click();
+        }
+      }
+    });
+
+    // Add input validation
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+      input.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        if (value < 0) this.value = 0;
+        if (value > 100) this.value = 100;
+      });
+    });
+
+    // Progressive Web App support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Register service worker for offline support
+        // navigator.serviceWorker.register('/sw.js');
+      });
+    }
+
+    // Save form data to localStorage
+    function saveFormData() {
+      const formData = {
+        yarimillik: {
+          ksq1: document.getElementById('ksq1').value,
+          ksq2: document.getElementById('ksq2').value,
+          ksq3: document.getElementById('ksq3').value,
+          has_bsq: document.getElementById('has_bsq').checked,
+          bsq: document.getElementById('bsq').value
+        },
+        illik: {
+          y1: document.getElementById('y1').value,
+          y2: document.getElementById('y2').value
+        }
+      };
+      localStorage.setItem('gradeCalculatorData', JSON.stringify(formData));
+    }
+
+    // Load form data from localStorage
+    function loadFormData() {
+      const savedData = localStorage.getItem('gradeCalculatorData');
+      if (savedData) {
+        const formData = JSON.parse(savedData);
+        
+        // Load yarımillik data
+        if (formData.yarimillik) {
+          document.getElementById('ksq1').value = formData.yarimillik.ksq1 || '';
+          document.getElementById('ksq2').value = formData.yarimillik.ksq2 || '';
+          document.getElementById('ksq3').value = formData.yarimillik.ksq3 || '';
+          document.getElementById('has_bsq').checked = formData.yarimillik.has_bsq || false;
+          document.getElementById('bsq').value = formData.yarimillik.bsq || '';
+          if (formData.yarimillik.has_bsq) {
+            toggleBSQ();
+          }
+        }
+        
+        // Load illik data
+        if (formData.illik) {
+          document.getElementById('y1').value = formData.illik.y1 || '';
+          document.getElementById('y2').value = formData.illik.y2 || '';
+        }
+      }
+    }
+
+    // Auto-save on input change
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', saveFormData);
+    });
+
+    // Load saved data on page load
+    window.addEventListener('DOMContentLoaded', loadFormData);
+  </script>
 </body>
 </html>
